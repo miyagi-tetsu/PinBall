@@ -11,17 +11,23 @@ public class FripperController : MonoBehaviour {
 
 	private float flickAngle = -20;
 
+//発展課題
+	private int left_ID = -9;
+	private int right_id = -9;
+
 	// Use this for initialization
 	void Start () {
 
 		this.myHingeJoint = GetComponent<HingeJoint>();
 
 		SetAngle(this.defaultAngle);
-		
+
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+
 
 
 		if (Input.GetKeyDown(KeyCode.LeftArrow) && tag == "LeftFripperTag") {
@@ -42,30 +48,52 @@ public class FripperController : MonoBehaviour {
 
 
 //発展課題
-		foreach (Touch t in Input.touches)
-		{
-			if (t.position.x <= (Screen.width/2)) {
+		foreach (Touch t in Input.touches) {
+			if (t.position.x <= (Screen.width / 2)) {
 				if (t.phase == TouchPhase.Began && tag == "LeftFripperTag") {
 					SetAngle (this.flickAngle);
+					left_ID = t.fingerId;
+//					Debug.Log (Screen.width);
+
 				}
 
 				if (t.phase == TouchPhase.Ended && tag == "LeftFripperTag") {
 					SetAngle (this.defaultAngle);
+					left_ID = -9;
+				}					
+
+//右・左のタップ時にIDを取得、反対画面に移動判定でIDを判定して下ろす
+				if (t.phase == TouchPhase.Moved) {
+					if(right_id == t.fingerId){
+						SetAngle (this.defaultAngle);
+						right_id = -9;
+				//	Debug.Log (t.fingerId);
+					}
 				}
 			}
 
-			if (t.position.x > (Screen.width/2)) {
+			if (t.position.x > (Screen.width / 2)) {
 				if (t.phase == TouchPhase.Began && tag == "RightFripperTag") {
 					SetAngle (this.flickAngle);
+					right_id = t.fingerId;
 				}
 
 				if (t.phase == TouchPhase.Ended && tag == "RightFripperTag") {
 					SetAngle (this.defaultAngle);
+					right_id = -9;
 				}
-			}
+
+				//タッチのしたまま、画面右側に移動したら、フリップを下す
+				if (t.phase == TouchPhase.Moved) {
+					if(left_ID == t.fingerId){
+						SetAngle (this.defaultAngle);
+						left_ID = -9;
+						//	Debug.Log (t.fingerId);
+					}
+				}
 			
 			}
-
+		}
 	}
 
 
